@@ -63,14 +63,22 @@ public class SessionDemo extends HttpServlet {
         String password = request.getParameter("password");
         if(username.equals("admin")&&password.equals("admin")){
             
-            //HttpSession session = request.getSession();
-            Cookie fk = getCookie(request,"CSRFCookie");
-            String Cookie_Name = fk.getName();
-            String Cookie_Value = fk.getValue();
+            HttpSession session = request.getSession(false);
+            String Session_Id = session.getId();
+            Cookie sessionCookie = new Cookie("Session_Cookie",Session_Id);
+            response.addCookie(sessionCookie);
+            Cookie tokenCookie = getCookie(request,"CSRFCookie");
+            String Cookie_Name = tokenCookie.getName();
+            String Cookie_Value = tokenCookie.getValue();
             System.out.println(Cookie_Name+" : "+Cookie_Value);
             String token = request.getParameter("token");      
             System.out.println("token in DOM : "+token);
-            if(Cookie_Value.equals(token)){
+            Cookie sCookie = getCookie(request,"JSESSIONID");
+            String sCookie_Name = sCookie.getName();
+            String sCookie_Value = sCookie.getValue();
+            System.out.println("Session Id : "+Session_Id);
+            System.out.println(sCookie_Name+" : "+sCookie_Value);
+            if((Cookie_Value.equals(token))&&(sCookie_Value.equals(Session_Id))){
                 request.getRequestDispatcher("welcome.jsp").forward(request, response);
             }else{
                 request.getRequestDispatcher("index.jsp").forward(request, response);
