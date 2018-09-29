@@ -21,75 +21,67 @@ import javax.xml.bind.DatatypeConverter;
  *
  * @author KALINDU
  */
-@WebServlet(name = "SessionDemo", urlPatterns = {"/SessionDemo"})
-public class SessionDemo extends HttpServlet {
-    
-    String Cookie_Value = null;
-    String Cookie_Name = null;
-    String token = null;
+@WebServlet(name = "Login", urlPatterns = {"/Login"})
+public class Login extends HttpServlet {
     
     
-    public static Cookie getCookie(HttpServletRequest request, String name) {
-        
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(name)) { 
-                    return cookie;
-                }    
-            }
+    
+    String generateToken(){
+            SecureRandom secureRandom = new SecureRandom();
+            byte[] buffer = new byte[50];
+            secureRandom.nextBytes(buffer);
+            return DatatypeConverter.printHexBinary(buffer);
         }
-        return null;
-    }
+    
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet Login</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet Login at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         } finally {
             out.close();
         }
     }
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
-
+    
     @Override
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+                
+        String username = request.getParameter("username");
+	String password = request.getParameter("password");
         
-        response.setContentType("text/html;charset=UTF-8");
-	PrintWriter out = response.getWriter();
-        try{
-            Cookie tokenCookie = getCookie(request,"CSRF_Token");
-            Cookie_Name = tokenCookie.getName();
-            Cookie_Value = tokenCookie.getValue();
-            System.out.println(Cookie_Name+" : "+Cookie_Value);
-            token = request.getParameter("token");
-            System.out.println("Token in DOM : "+token);
-            if(token != null){
-                if(token.equals(Cookie_Value)){
-                    out.println("Form submitted successfully");
-                }else{
-                    out.println("Error occur while validating the CSRF token");
-                }
-            }else{
-                out.println("CSRF token absent or value is null/empty");
-            }
+        if (username.equals("admin") && password.equals("admin")){
             
-        }finally{
-            out.close();
+            HttpSession session = request.getSession();
+            String Session_Id = session.getId();
+            Cookie sessionCookie = new Cookie("Session_Cookie",Session_Id);
+            response.addCookie(sessionCookie);
+            String CSRF_Token = generateToken();
+            Cookie CSRF_Cookie = new Cookie("CSRF_Token",CSRF_Token);
+            response.addCookie(CSRF_Cookie);
+            
+            response.sendRedirect("welcome.jsp");
+            
         }
-
     }
-
 
     @Override
     public String getServletInfo() {

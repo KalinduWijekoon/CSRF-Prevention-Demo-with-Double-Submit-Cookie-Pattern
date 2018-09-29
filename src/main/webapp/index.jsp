@@ -6,52 +6,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login Page</title>
-        <script src="js/jquery-2.2.4.js"></script>
-        <script type="text/javascript">
-            
-            function generateToken() {
-                  var text = "";
-                  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                  for (var i = 0; i < 50; i++) {
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
-                }
-                  return text;
-                }
-            var token = generateToken();
-            document.cookie = "CSRFCookie="+token+";path=/";
-                        
-            function getCookie(cname) {
-                var name = cname + "=";
-                var decodedCookie = decodeURIComponent(document.cookie);
-                var ca = decodedCookie.split(';');
-                for(var i = 0; i <ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) === ' ') {
-                        c = c.substring(1);
-                    }
-                    if (c.indexOf(name) === 0) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-                return "";
-            }
-            var csrfcookie = getCookie("CSRFCookie");
-            
-            $(document).ready(function(){
-            window.onload = function() {
-                
-                $('#token').val(csrfcookie);
-
-            }});
-
-        </script>
-
-        
     </head>
     <body>
         <h1>Login Page!</h1>
         
-        <form method="post" action="SessionDemo">
+        <form method="POST" action="Login">
             <table border="0" cellpadding="2" cellspacing="2">
                 <tr>
                     <td>Username</td>
@@ -68,7 +27,6 @@
 
                 </tr>
             </table>
-            <input type="hidden" id="token" name="token" value="a"/>
         </form>
     </body>
 </html>
