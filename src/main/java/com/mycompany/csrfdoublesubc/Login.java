@@ -80,6 +80,8 @@ public class Login extends HttpServlet {
             
             response.sendRedirect("welcome.jsp");
             
+        }else{
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
 
